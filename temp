@@ -1,0 +1,257 @@
+package th.co.ais.dt.web.spec.af.test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class GoodsReturnTest {
+	
+	@Test
+	public void testDigitalClock() throws Exception {
+		 Assert.assertEquals(0, checkDigitalClock(6, 2, 4, 7));
+		 Assert.assertEquals(0, checkDigitalClock(1, 10, 2, 9));
+		 Assert.assertEquals(0, checkDigitalClock(21, 1, 2, 9));
+		 Assert.assertEquals(0, checkDigitalClock(1, 3, 1, -2));
+		 Assert.assertEquals(0, checkDigitalClock(2, 3, -1, 2));
+		 Assert.assertEquals(6, checkDigitalClock(1, 8, 3, 2));
+		 Assert.assertEquals(3, checkDigitalClock(2, 3, 3, 2));
+	}			
+	
+	private long checkDigitalClock(long num1, long num2, long num3, long num4) {
+		if (!isValidDigit(num1) || !isValidDigit(num2) || !isValidDigit(num3) || !isValidDigit(num4)) {
+			return 0;
+		}
+		Set<String> digitClocks = new HashSet<>();
+		List<String> patternDigitClocks = new ArrayList<>();
+		patternDigitClocks.add(getPatternDigitClock(num1, num2, num3, num4));
+		patternDigitClocks.add(getPatternDigitClock(num1, num2, num4, num3));
+		patternDigitClocks.add(getPatternDigitClock(num1, num3, num2, num4));
+		patternDigitClocks.add(getPatternDigitClock(num1, num3, num4, num2));
+		patternDigitClocks.add(getPatternDigitClock(num1, num4, num2, num3));
+		patternDigitClocks.add(getPatternDigitClock(num1, num4, num3, num2));				
+		patternDigitClocks.add(getPatternDigitClock(num2, num1, num3, num4));
+		patternDigitClocks.add(getPatternDigitClock(num2, num1, num4, num3));
+		patternDigitClocks.add(getPatternDigitClock(num2, num3, num1, num4));
+		patternDigitClocks.add(getPatternDigitClock(num2, num3, num4, num1));
+		patternDigitClocks.add(getPatternDigitClock(num2, num4, num1, num3));
+		patternDigitClocks.add(getPatternDigitClock(num2, num4, num3, num1));		
+		patternDigitClocks.add(getPatternDigitClock(num3, num1, num2, num4));
+		patternDigitClocks.add(getPatternDigitClock(num3, num1, num4, num2));
+		patternDigitClocks.add(getPatternDigitClock(num3, num2, num1, num4));
+		patternDigitClocks.add(getPatternDigitClock(num3, num2, num4, num1));
+		patternDigitClocks.add(getPatternDigitClock(num3, num4, num1, num2));
+		patternDigitClocks.add(getPatternDigitClock(num3, num4, num2, num1));	
+		patternDigitClocks.add(getPatternDigitClock(num4, num1, num2, num3));
+		patternDigitClocks.add(getPatternDigitClock(num4, num1, num3, num2));
+		patternDigitClocks.add(getPatternDigitClock(num4, num2, num1, num3));
+		patternDigitClocks.add(getPatternDigitClock(num4, num2, num3, num1));
+		patternDigitClocks.add(getPatternDigitClock(num4, num3, num1, num2));
+		patternDigitClocks.add(getPatternDigitClock(num4, num3, num2, num1));
+		for (String patternDigitClock : patternDigitClocks) {
+			Matcher matcher = Pattern.compile("([0-1][0-9]|2[0-3])[0-5][0-9]").matcher(patternDigitClock);
+			if (matcher.matches()) {
+				digitClocks.add(patternDigitClock);
+			}
+		}
+        return digitClocks.size();
+	}
+	
+	private boolean isValidDigit(long num) {
+		return num >= 0 && num <= 9;
+	}
+	
+	private String getPatternDigitClock(long digit1, long digit2, long digit3, long digit4) {
+		return new StringBuilder().append(digit1).append(digit2).append(digit3).append(digit4).toString();
+	}
+	
+	private List<String> printAllRecursive(int n, long[] elements, List<String> result) {
+		if (n == 1) {
+			printArray(elements, result);
+		} else {
+			for (int i = 0; i < n - 1; i++) {
+				printAllRecursive(n - 1, elements, result);
+				if (n % 2 == 0) {
+					swap(elements, i, n - 1);
+				} else {
+					swap(elements, 0, n - 1);
+				}
+			}
+			printAllRecursive(n - 1, elements, result);
+		}
+		return result;
+	}
+	
+	private List<String> test(int n, long[] elements, List<String> result) {
+		int[] indexes = new int[n];
+		for (int i = 0; i < n; i++) {
+			indexes[i] = 0;
+		}
+		printArray(elements, result);
+		int i = 0;
+		while (i < n) {
+			if (indexes[i] < i) {
+				swap(elements, i % 2 == 0 ? 0 : indexes[i], i);
+				printArray(elements, result);
+				indexes[i]++;
+				i = 0;
+			} else {
+				indexes[i] = 0;
+				i++;
+			}
+		}
+		return result;
+	}
+	
+	private void swap(long[] input, int a, int b) {
+	    long tmp = input[a];
+	    input[a] = input[b];
+	    input[b] = tmp;
+	}
+
+	private void printArray(long[] input, List<String> result) {
+	    String s = "";
+	    for(int i = 0; i < input.length; i++) {
+	        s += input[i];
+	    }
+	    result.add(s);
+	}
+	
+	@Test
+	public void testMagicSquare() throws Exception {
+		int mat1[][] = { { 4, 3, 4, 5, 3 }, { 2, 7, 3, 8, 4 }, { 1, 7, 6, 5, 2 }, { 8, 4, 9, 5, 5 } };
+		Assert.assertEquals(3, findMaxMagicSquareNum(mat1));
+		int mat2[][] = { { 2, 2, 1, 1 }, { 2, 2, 2, 2 }, { 1, 2, 2, 2 } };
+		Assert.assertEquals(2, findMaxMagicSquareNum(mat2));
+		int mat3[][] = { { 7, 2, 4 }, { 2, 7, 6 }, { 9, 5, 1 }, { 4, 3, 8 }, { 3, 5, 4 } };
+		Assert.assertEquals(3, findMaxMagicSquareNum(mat3));
+		int mat4[][] = { { 1, 2, 2 }, { 2, 2, 1 }, { 2, 1, 2 } };
+		Assert.assertEquals(0, findMaxMagicSquareNum(mat4));
+	}
+	
+	private int findMaxMagicSquareNum(int arrMatrix[][]) {
+		int maxRow = arrMatrix.length;
+		int maxCol = arrMatrix[0].length;
+		int maxSquareNum = maxRow <= maxCol ? maxRow : maxCol;
+		while (maxSquareNum >= 2) {
+			if (haveMagicSquareBySize(arrMatrix, maxSquareNum, 0, 0)) {
+				return maxSquareNum;
+			}
+			maxSquareNum--;
+		}
+		return 0;
+	}
+	
+	private boolean haveMagicSquareBySize(int arrMatrix[][], int squareNum, int shiftRow, int shiftCol) {
+		int square[][] = new int[squareNum][squareNum];
+		for (int i = 0; i < squareNum; i++) {
+			for (int j = 0; j < squareNum; j++) {
+				square[i][j] = arrMatrix[i + shiftRow][j + shiftCol];
+			}
+		}
+		if (isMagicSquare(square, squareNum)) {
+			return true;
+		} else {
+			if (squareNum + shiftCol < arrMatrix[0].length) {
+				if (haveMagicSquareBySize(arrMatrix, squareNum, shiftRow, shiftCol + 1)) {
+					return true;
+				}
+			} else {
+				if (squareNum + shiftRow < arrMatrix.length) {
+					if (haveMagicSquareBySize(arrMatrix, squareNum, shiftRow + 1, 0)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	private boolean isMagicSquare(int square[][], int num) {
+		int sumDiagonalRight = 0;
+		int sumDiagonalLeft = 0;
+		for (int i = 0; i < num; i++) { // Sum of diagonal to right
+			sumDiagonalRight += square[i][i];
+		}
+		for (int i = 0; i < num; i++) { // // Sum of diagonal to left 
+			sumDiagonalLeft += square[i][num - 1 - i];
+		}
+		if (sumDiagonalRight != sumDiagonalLeft) {
+			return false;
+		}
+		for (int i = 0; i < num; i++) { // Sums of rows
+			int sumRow = 0;
+			for (int j = 0; j < num; j++) {
+				sumRow += square[i][j];
+			}
+			if (sumDiagonalRight != sumRow) {
+				return false;
+			}
+		}
+		for (int i = 0; i < num; i++) { // Sums of columns
+			int sumCol = 0;
+			for (int j = 0; j < num; j++) {
+				sumCol += square[j][i];
+			}
+			if (sumDiagonalRight != sumCol) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	@Test
+	public void testRingArea() throws Exception {
+		int[] arrX1 = { 4, 0, 1, -2 };
+		int[] arrY1 = { -4, 4, 3, 0 };
+		Assert.assertEquals(1, countPointInRingArea(2, 4, arrX1, arrY1));
+		int[] arrX2 = { 0, 1, 2, -2, 3 };
+		int[] arrY2 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(2, countPointInRingArea(1, 3, arrX2, arrY2));
+		int[] arrX3 = { 0, 1, 2, -2, 3 };
+		int[] arrY3 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(0, countPointInRingArea(0, 0, arrX3, arrY3));
+		int[] arrX4 = { 0, 1, 2, -2, 3 };
+		int[] arrY4 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(2, countPointInRingArea(3, 3, arrX4, arrY4));
+		int[] arrX5 = { 0, 1, 2, -2, 3 };
+		int[] arrY5 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(0, countPointInRingArea(-1, 3, arrX5, arrY5));
+		int[] arrX6 = { 0, 1, 2, -2, 3 };
+		int[] arrY6 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(0, countPointInRingArea(1, -3, arrX6, arrY6));
+		int[] arrX7 = { 0, 1, 2, -2, 3 };
+		int[] arrY7 = { 0, 1, 4, 1, 0 };	
+		Assert.assertEquals(0, countPointInRingArea(4, 2, arrX7, arrY7));
+	}
+	
+	private int countPointInRingArea(int innerRadius, int outerRadius, int[] arrPointX, int[] arrPointY) {
+		if (innerRadius < 0 || outerRadius < 0 || innerRadius > outerRadius) {
+			return 0;
+		}
+		List<String> points = new ArrayList<>(); 
+		for (int i = 0; i < arrPointX.length; i++) {
+			for (int j = 0; j < arrPointY.length; j++) {
+				String point = arrPointX[i] + "," + arrPointY[j];
+				if (arrPointX[i] == arrPointY[j] && !points.contains(point)) {
+					double distance = getDistance(arrPointX[i], arrPointY[j]);
+					if (distance < outerRadius && distance != innerRadius) {
+						points.add(point);
+					}
+				}
+			}
+		}
+		return points.size();
+	}
+	
+	private double getDistance(int x, int y) {
+		int centreX = 0, centreY = 0;
+		return Math.sqrt(Math.pow(x - centreX, 2) + Math.pow(y - centreY, 2));
+	}
+}
